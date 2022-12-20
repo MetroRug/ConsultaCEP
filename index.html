@@ -1,0 +1,211 @@
+<html>
+    <head>
+    <title>Açovisa</title>
+    <link rel="stylesheet" href="css/materialize.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    </head>
+
+    <body>
+    <!-- Inicio do formulario -->
+    <header class="card-panel red">
+        <font color="white" face="arial">Informações de cadastro</font> 
+    </header>
+    
+    <div class="row">
+        <form class="col s12">
+
+            
+
+            <div class="input-fild col s12">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" placeholder="Seu nome: ">      
+            </div>
+
+            <div class="input-field col s12">
+                <input id="email" type="email" class="validate">
+                <label  for="email" >Email</label>
+              </div>
+
+            <div class="input-fild col s6">
+                <label for="data">Data</label>
+                <input type="date" id="data" class="datepicker">
+            </div>
+
+            <div class="input-fild col s6">
+                <label for="idade">Idade</label>
+                <input type="number" id="idade" placeholder="Sua idade: " > 
+            </div>
+
+            <div class="input-fild col s6">
+                <label for="fone">Telefone</label>
+                <input type="tel" id="fone" placeholder="Seu Telefone: "> 
+            </div>
+        </form>
+
+
+    </div>
+
+    <div  class="card-panel red" >
+        <font color="white" face="arial">Informações de endereço</font> 
+    </div>
+
+    <div class="row">
+      <form method="get" action="." class="col s12">
+
+        <div class="input-fild col s6">
+            <label for="cep">Cep:
+            <input name="cep" type="text" id="cep"
+                onblur="pesquisacep(this.value);" /></label><br />
+        </div>
+
+        <div class="input-fild col s6">
+            <label>Rua:
+            <input name="rua" type="text" id="rua"/>
+            </label><br />
+        </div>
+
+        <div class="input-fild col s12">
+            <label>Bairro:
+            <input name="bairro" type="text" id="bairro" size="40" /></label><br />
+        </div>
+
+        <div class="input-fild col s10">
+            <label>Cidade:
+            <input name="cidade" type="text" id="cidade" size="40" /></label><br />
+        </div>
+
+        <div class="input-fild col s2">
+            <label>Estado:
+            <input name="uf" type="text" id="uf" size="2" /></label><br />
+        </div>
+
+        <div class="input-fild col s10">
+            <label>IBGE:
+            <input name="ibge" type="text" id="ibge" size="8" /></label><br />
+        </div>
+      </form>
+    </div>
+
+
+
+<!-- Adicionando Javascript -->
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="js/materialize.js"></script>  
+<script>
+    
+    function limpa_formulário_cep() {
+            //Limpa valores do formulário de cep.
+            document.getElementById('rua').value=("");
+            document.getElementById('bairro').value=("");
+            document.getElementById('cidade').value=("");
+            document.getElementById('uf').value=("");
+            document.getElementById('ibge').value=("");
+    }
+
+    function meu_callback(conteudo) {
+        if (!("erro" in conteudo)) {
+            //Atualiza os campos com os valores.
+            document.getElementById('rua').value=(conteudo.logradouro);
+            document.getElementById('bairro').value=(conteudo.bairro);
+            document.getElementById('cidade').value=(conteudo.localidade);
+            document.getElementById('uf').value=(conteudo.uf);
+            document.getElementById('ibge').value=(conteudo.ibge);
+        } //end if.
+        else {
+            //CEP não Encontrado.
+            limpa_formulário_cep();
+            alert("CEP não encontrado.");
+        }
+    }
+        
+    function pesquisacep(valor) {
+
+        //Nova variável "cep" somente com dígitos.
+        var cep = valor.replace(/\D/g, '');
+
+        //Verifica se campo cep possui valor informado.
+        if (cep != "") {
+
+            //Expressão regular para validar o CEP.
+            var validacep = /^[0-9]{8}$/;
+
+            //Valida o formato do CEP.
+            if(validacep.test(cep)) {
+
+                //Preenche os campos com "..." enquanto consulta webservice.
+                document.getElementById('rua').value="...";
+                document.getElementById('bairro').value="...";
+                document.getElementById('cidade').value="...";
+                document.getElementById('uf').value="...";
+                document.getElementById('ibge').value="...";
+
+                //Cria um elemento javascript.
+                var script = document.createElement('script');
+
+                //Sincroniza com o callback.
+                script.src = 'https://viacep.com.br/ws/'+ cep + '/json/?callback=meu_callback';
+
+                //Insere script no documento e carrega o conteúdo.
+                document.body.appendChild(script);
+
+            } //end if.
+            else {
+                //cep é inválido.
+                limpa_formulário_cep();
+                alert("Formato de CEP inválido.");
+            }
+        } //end if.
+        else {
+            //cep sem valor, limpa formulário.
+            limpa_formulário_cep();
+        }
+    };
+
+    </script> 
+
+    <script>
+ document.getElementById("data").addEventListener('change', function() {
+  var data = new Date(this.value);
+  if(isDate_(this.value) && data.getFullYear() > 1900)
+      document.getElementById("idade").value = calculateAge(this.value);
+});
+
+function calculateAge(dobString) {
+  var dob = new Date(dobString);
+  var currentDate = new Date();
+  var currentYear = currentDate.getFullYear();
+  var birthdayThisYear = new Date(currentYear, dob.getMonth(), dob.getDate());
+  var age = currentYear - dob.getFullYear();
+  if(birthdayThisYear > currentDate) {
+    age--;
+  }
+  return age;
+}
+
+function calcular(data) {
+  var data = document.form.nascimento.value;
+  alert(data);
+  var partes = data.split("/");
+  var junta = partes[2]+"-"+partes[1]+"-"+partes[0];
+  document.form.idade.value = (calculateAge(junta) );
+}
+
+var isDate_ = function(input) {
+        var status = false;
+        if (!input || input.length <= 0) {
+          status = false;
+        } else {
+          var result = new Date(input);
+          if (result == 'Invalid Date') {
+            status = false;
+          } else {
+            status = true;
+          }
+        }
+        return status;
+}
+    </script>
+    </body>
+
+    </html>
